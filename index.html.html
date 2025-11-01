@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        #text-to-type {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        #input-field {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tes Mengetik</h1>
+        <p id="text-to-type">Ini adalah contoh teks untuk tes mengetik. Ketiklah dengan cepat dan akurat!</p>
+        <textarea id="input-field" placeholder="Mulai mengetik di sini..."></textarea>
+        <button id="start-btn">Mulai Tes</button>
+        <div id="results" style="display: none;">
+            <p>Waktu: <span id="time">0</span> detik</p>
+            <p>Kecepatan: <span id="wpm">0</span> WPM</p>
+            <p>Akurasi: <span id="accuracy">0</span>%</p>
+        </div>
+    </div>
+
+    <script>
+        const textToType = document.getElementById('text-to-type');
+        const inputField = document.getElementById('input-field');
+        const startBtn = document.getElementById('start-btn');
+        const results = document.getElementById('results');
+        const timeSpan = document.getElementById('time');
+        const wpmSpan = document.getElementById('wpm');
+        const accuracySpan = document.getElementById('accuracy');
+
+        let startTime, endTime;
+        let isTestRunning = false;
+
+        // Teks acak (bisa diganti)
+        const sampleTexts = [
+            "Ini adalah tes mengetik sederhana. Coba ketik dengan cepat dan benar.",
+            "JavaScript membuat website interaktif. HTML untuk struktur, CSS untuk gaya.",
+            "Praktik mengetik setiap hari bisa meningkatkan kecepatan dan akurasi."
+        ];
+
+        startBtn.addEventListener('click', () => {
+            if (!isTestRunning) {
+                startTest();
+            } else {
+                endTest();
+            }
+        });
+
+        function startTest() {
+            isTestRunning = true;
+            inputField.value = '';
+            inputField.focus();
+            startTime = new Date();
+            startBtn.textContent = 'Selesai Tes';
+            results.style.display = 'none';
+            textToType.textContent = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+        }
+
+        function endTest() {
+            isTestRunning = false;
+            endTime = new Date();
+            const timeTaken = (endTime - startTime) / 1000;
+            const typedText = inputField.value;
+            const originalText = textToType.textContent;
+
+            // Hitung WPM
+            const wordsTyped = typedText.split(' ').length;
+            const wpm = Math.round((wordsTyped / timeTaken) * 60);
+
+            // Hitung akurasi
+            let correctChars = 0;
+            for (let i = 0; i < Math.min(typedText.length, originalText.length); i++) {
+                if (typedText[i] === originalText[i]) correctChars++;
+            }
+            const accuracy = Math.round((correctChars / originalText.length) * 100);
+
+            // Tampilkan hasil
+            timeSpan.textContent = timeTaken.toFixed(2);
+            wpmSpan.textContent = wpm;
+            accuracySpan.textContent = accuracy;
+            results.style.display = 'block';
+            startBtn.textContent = 'Mulai Tes';
+        }
+
+        inputField.addEventListener('input', () => {
+            if (isTestRunning && inputField.value === textToType.textContent) {
+                endTest();
+            }
+        });
+    </script>
+</body>
+</html>
